@@ -1,5 +1,13 @@
 import { db } from "./db";
 
+export type DashboardRange = "7d" | "30d" | "90d" | "all";
+
+const RANGE_DAYS: Record<Exclude<DashboardRange, "all">, number> = {
+  "7d": 7,
+  "30d": 30,
+  "90d": 90,
+};
+
 export type DashboardData = {
   totalRevenue: number;
   totalOrders: number;
@@ -20,16 +28,31 @@ export type DashboardData = {
   }[];
 };
 
-export async function getDashboardData(): Promise<DashboardData> {
-  const [productCount, orderCount, customerCount, lowStockCount, orders] = await Promise.all([
+function rangeStart(range: DashboardRange): Date | null {
+  if (range === "all") return null;
+  const days = RANGE_DAYS[range];
+  const start = new Date();
+  start.setDate(start.getDate() - days);
+  return start;
+}
+
+export async function getDashboardData(range: DashboardRange = "all"): Promise<DashboardData> {
+  const from = rangeStart(range);
+  const dateWhere = from ? { createdAt: { gte: from } } : {};
+
+  const [productCount, lowStockCount, orders] = await Promise.all([
     db.product.count(),
-    db.order.count(),
-    db.user.count({ where: { role: "customer" } }),
     db.product.count({ where: { inventory: { lte: 5 } } }),
-    db.order.findMany({ include: { user: true, items: { include: { product: true } } }, orderBy: { createdAt: "desc" } }),
+    db.order.findMany({
+      where: dateWhere,
+      include: { user: true, items: { include: { product: true } } },
+      orderBy: { createdAt: "desc" },
+    }),
   ]);
 
+  const totalOrders = orders.length;
   const totalRevenue = orders.reduce((sum, o) => sum + o.totalCents, 0);
+  const totalCustomers = new Set(orders.map((o) => o.userId)).size;
 
   const revenueByDay = aggregateRevenueByDay(orders);
 
@@ -59,7 +82,18 @@ export async function getDashboardData(): Promise<DashboardData> {
     date: o.createdAt.toISOString().split("T")[0],
   }));
 
-  return { totalRevenue, totalOrders: orderCount, totalProducts: productCount, totalCustomers: customerCount, avgOrderValue: orderCount > 0 ? Math.round(totalRevenue / orderCount) : 0, lowStockCount, revenueByDay, ordersByStatus, topProducts, recentOrders };
+  return {
+    totalRevenue,
+    totalOrders,
+    totalProducts: productCount,
+    totalCustomers,
+    avgOrderValue: totalOrders > 0 ? Math.round(totalRevenue / totalOrders) : 0,
+    lowStockCount,
+    revenueByDay,
+    ordersByStatus,
+    topProducts,
+    recentOrders,
+  };
 }
 
 function aggregateRevenueByDay(orders: { createdAt: Date; totalCents: number }[]): { date: string; revenue: number }[] {

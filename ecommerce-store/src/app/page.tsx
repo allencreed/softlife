@@ -38,7 +38,7 @@ export default async function HomePage() {
       />
       <section className="relative h-[90vh] min-h-[600px] flex items-center justify-center overflow-hidden bg-surface-black">
         <img
-          src="/images/hero.png"
+          src="/images/Love_Soft_Life_Header.jpg"
           alt="Love Soft Life"
           className="absolute inset-0 w-full h-full object-cover"
           style={{ objectPosition: "center 30%" }}
@@ -46,10 +46,10 @@ export default async function HomePage() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
         <div className="relative z-10 mx-auto px-6 text-center" style={{ maxWidth: 980 }}>
-          <h1 className="text-[32px] sm:text-[44px] lg:text-[56px] font-light leading-[1.07] tracking-[-0.28px] text-white">
+          <h1 className="text-[44px] sm:text-[64px] lg:text-[80px] leading-[1.1] text-white [font-family:var(--font-aston)] [font-weight:400]">
             Love Soft Life
           </h1>
-          <p className="mx-auto mt-3 max-w-md text-[20px] sm:text-[24px] lg:text-[28px] font-light leading-[1.14] tracking-[0.196px] text-white/90">
+          <p className="mx-auto mt-6 max-w-md text-[10px] sm:text-[12px] lg:text-[14px] font-light leading-[1.14] tracking-[0.196px] text-white/90">
             Premium products for a comfortable life.
           </p>
           <div className="mt-6">

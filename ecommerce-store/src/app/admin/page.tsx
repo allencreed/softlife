@@ -1,19 +1,51 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/utils";
-import { getDashboardData } from "@/lib/admin";
+import { getDashboardData, type DashboardRange } from "@/lib/admin";
 import { RevenueChart } from "@/components/admin/RevenueChart";
 import { OrdersPieChart } from "@/components/admin/OrdersPieChart";
 import { RecentOrdersTable } from "@/components/admin/RecentOrdersTable";
+import { DashboardLive } from "@/components/admin/DashboardLive";
 
-export default async function AdminDashboard() {
-  const [{ totalRevenue, totalOrders, totalProducts, totalCustomers, avgOrderValue, lowStockCount, revenueByDay, ordersByStatus, topProducts, recentOrders }] = await Promise.all([
-    getDashboardData(),
-  ]);
+const RANGE_OPTIONS: { value: DashboardRange; label: string }[] = [
+  { value: "7d", label: "7d" },
+  { value: "30d", label: "30d" },
+  { value: "90d", label: "90d" },
+  { value: "all", label: "All" },
+];
+
+function resolveRange(range?: string): DashboardRange {
+  return range === "7d" || range === "30d" || range === "90d" || range === "all" ? range : "all";
+}
+
+export default async function AdminDashboard(props: { searchParams?: Promise<{ range?: string }> }) {
+  const sp = await props.searchParams;
+  const range = resolveRange(sp?.range);
+
+  const { totalRevenue, totalOrders, totalProducts, totalCustomers, avgOrderValue, lowStockCount, revenueByDay, ordersByStatus, topProducts, recentOrders } =
+    await getDashboardData(range);
 
   return (
-    <div className="space-y-8">
-      <h1 className="text-[28px] font-semibold leading-[1.14] text-ink">Dashboard</h1>
+    <DashboardLive range={range}>
+      <div className="space-y-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-[28px] font-semibold leading-[1.14] text-ink">Dashboard</h1>
+        <div className="flex items-center gap-2 flex-wrap">
+          {RANGE_OPTIONS.map((opt) => (
+            <Link
+              key={opt.value}
+              href={opt.value === "all" ? "/admin" : `/admin?range=${opt.value}`}
+              className={`px-4 py-1.5 text-sm rounded-full border transition-colors ${
+                range === opt.value
+                  ? "bg-primary text-white border-primary"
+                  : "border-hairline text-muted-foreground hover:text-ink hover:border-ink/20"
+              }`}
+            >
+              {opt.label}
+            </Link>
+          ))}
+        </div>
+      </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
         {[
@@ -75,6 +107,7 @@ export default async function AdminDashboard() {
         </div>
         <RecentOrdersTable orders={recentOrders} />
       </div>
-    </div>
+      </div>
+    </DashboardLive>
   );
 }

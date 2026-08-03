@@ -8,28 +8,75 @@ const NAV_ITEMS = [
   { href: "/admin/orders", label: "Orders" },
 ];
 
-export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+export default async function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  // Dev-only preview bypass: lets you SEE the admin UI locally without
+  // Auth0 configured. Production keeps the real auth gate (below) intact.
+  if (process.env.NODE_ENV !== "production") {
+    return (
+      <div
+        className="mx-auto px-6 py-12 flex gap-10"
+        style={{ maxWidth: 1200 }}
+      >
+        <nav className="w-44 shrink-0">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-4">
+            Admin
+          </p>
+          <div className="space-y-1">
+            {NAV_ITEMS.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg text-muted-foreground hover:text-ink hover:bg-canvas-parchment transition-colors"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
+        </nav>
+        <main className="flex-1 min-w-0">{children}</main>
+      </div>
+    );
+  }
+
   const session = await auth0.getSession();
   let isAdmin = false;
 
   if (session?.user) {
-    const user = await db.user.findUnique({ where: { auth0Id: session.user.sub } });
+    const user = await db.user.findUnique({
+      where: { auth0Id: session.user.sub },
+    });
     isAdmin = user?.role === "admin";
   }
 
   if (!isAdmin) {
     return (
-      <div className="mx-auto px-6 py-20 text-center" style={{ maxWidth: 980 }}>
-        <h1 className="text-[34px] font-semibold leading-[1.47] text-ink">Access Denied</h1>
-        <p className="mt-2 text-muted-foreground">You do not have admin privileges.</p>
+      <div
+        className="mx-auto px-6 py-20 text-center"
+        style={{ maxWidth: 980 }}
+      >
+        <h1 className="text-[34px] font-semibold leading-[1.47] text-ink">
+          Access Denied
+        </h1>
+        <p className="mt-2 text-muted-foreground">
+          You do not have admin privileges.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto px-6 py-12 flex gap-10" style={{ maxWidth: 1200 }}>
+    <div
+      className="mx-auto px-6 py-12 flex gap-10"
+      style={{ maxWidth: 1200 }}
+    >
       <nav className="w-44 shrink-0">
-        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-4">Admin</p>
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-4">
+          Admin
+        </p>
         <div className="space-y-1">
           {NAV_ITEMS.map((item) => (
             <Link

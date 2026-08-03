@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import { Toaster } from "@/components/ui/sonner";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -9,6 +10,20 @@ const inter = Inter({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-inter",
+});
+
+const astonScript = localFont({
+  src: "../../public/assets/Aston Script.ttf",
+  variable: "--font-aston",
+  display: "swap",
+  weight: "400",
+});
+
+const verandahReverie = localFont({
+  src: "../../public/assets/VerandahReverie_PERSONAL_USE_ONLY.otf",
+  variable: "--font-verandah",
+  display: "swap",
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -41,7 +56,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.variable}>
+      <body className={`${inter.variable} ${astonScript.variable} ${verandahReverie.variable}`}>
         <Header />
         <main>{children}</main>
         <Footer />

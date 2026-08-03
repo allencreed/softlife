@@ -40,21 +40,21 @@ const columns = [
 
 export function Footer() {
   return (
-    <footer className="bg-canvas-parchment">
-      <div className="mx-auto px-6 py-16" style={{ maxWidth: 980 }}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+    <footer className="bg-black text-white/70">
+      <div className="mx-auto px-6 py-8" style={{ maxWidth: 980 }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {columns.map((col) => (
             <div key={col.heading}>
-              <h4 className="text-sm font-normal text-ink" style={{ fontSize: 14 }}>
+              <h4 className="text-sm font-normal text-white" style={{ fontSize: 13 }}>
                 {col.heading}
               </h4>
-              <ul className="mt-3 space-y-1">
+              <ul className="mt-2 space-y-0.5">
                 {col.links.map((link) => (
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="text-ink-muted-48 transition-colors hover:text-ink"
-                      style={{ fontSize: 17, lineHeight: "2.41" }}
+                      className="text-white/60 transition-colors hover:text-white"
+                      style={{ fontSize: 14, lineHeight: "1.9" }}
                     >
                       {link.label}
                     </Link>
@@ -64,8 +64,8 @@ export function Footer() {
             </div>
           ))}
         </div>
-        <hr className="my-8 border-hairline" />
-        <p className="text-ink-muted-48" style={{ fontSize: 12 }}>
+        <hr className="my-5 border-white/10" />
+        <p className="text-white/40" style={{ fontSize: 12 }}>
           &copy; 2026 Love Soft Life. All rights reserved.
         </p>
       </div>
