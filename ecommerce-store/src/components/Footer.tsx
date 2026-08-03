@@ -27,7 +27,7 @@ const columns = [
     links: [
       { label: "About Us", href: "/about" },
       { label: "Our Story", href: "/about" },
-      { label: "Admin", href: "/admin" },
+      { label: "Admin", href: "/admin", highlight: true },
     ],
   },
   {
@@ -38,6 +38,8 @@ const columns = [
     ],
   },
 ];
+
+type FooterLink = { label: string; href: string; highlight?: boolean };
 
 export function Footer() {
   return (
@@ -50,12 +52,16 @@ export function Footer() {
                 {col.heading}
               </h4>
               <ul className="mt-2 space-y-0.5">
-                {col.links.map((link) => (
+                {col.links.map((link: FooterLink) => (
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="text-white/60 transition-colors hover:text-white"
-                      style={{ fontSize: 14, lineHeight: "1.9" }}
+                      className={
+                        link.highlight
+                          ? "inline-flex items-center rounded-full border border-white/25 px-2.5 py-0.5 text-white transition-colors hover:bg-white/10 hover:text-white"
+                          : "text-white/60 transition-colors hover:text-white"
+                      }
+                      style={link.highlight ? undefined : { fontSize: 14, lineHeight: "1.9" }}
                     >
                       {link.label}
                     </Link>
