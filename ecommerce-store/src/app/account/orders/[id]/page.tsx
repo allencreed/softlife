@@ -3,6 +3,7 @@ import { auth0 } from "@/lib/auth0";
 import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/utils";
 import { parseImages } from "@/lib/images";
+import { useDevAuth, devSession } from "@/lib/devAuth";
 
 export default async function OrderDetailPage({
   params,
@@ -10,7 +11,7 @@ export default async function OrderDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const session = await auth0.getSession();
+  const session = useDevAuth() ? devSession() : await auth0.getSession();
   const user = session?.user
     ? await db.user.findUnique({ where: { auth0Id: session.user.sub } })
     : null;

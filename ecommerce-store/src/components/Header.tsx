@@ -2,9 +2,10 @@ import Link from "next/link";
 import { auth0 } from "@/lib/auth0";
 import { db } from "@/lib/db";
 import { SiteNav } from "./SiteNav";
+import { useDevAuth, devSession } from "@/lib/devAuth";
 
 export async function Header() {
-  const session = await auth0.getSession();
+  const session = useDevAuth() ? devSession() : await auth0.getSession();
   let user = null;
   let cartCount = 0;
 

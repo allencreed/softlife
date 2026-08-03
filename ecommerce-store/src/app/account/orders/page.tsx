@@ -2,9 +2,10 @@ import Link from "next/link";
 import { auth0 } from "@/lib/auth0";
 import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/utils";
+import { useDevAuth, devSession } from "@/lib/devAuth";
 
 export default async function OrdersPage() {
-  const session = await auth0.getSession();
+  const session = useDevAuth() ? devSession() : await auth0.getSession();
   const user = session?.user
     ? await db.user.findUnique({ where: { auth0Id: session.user.sub } })
     : null;
