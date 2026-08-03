@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { ProductCard } from "@/components/ProductCard";
+import { HeroShopButton } from "@/components/HeroShopButton";
 import { breadcrumbSchema } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -53,12 +54,7 @@ export default async function HomePage() {
             Premium products for a comfortable life.
           </p>
           <div className="mt-6">
-            <Link
-              href="/products"
-              className="inline-flex items-center justify-center rounded-full bg-primary px-[28px] py-[14px] text-[18px] font-light text-white hover:brightness-110 active:scale-[0.96] transition-all"
-            >
-              Shop All
-            </Link>
+            <HeroShopButton />
           </div>
         </div>
       </section>
